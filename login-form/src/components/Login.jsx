@@ -1,22 +1,27 @@
 import { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../firebaseConfig";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [mensagem, setMensagem] = useState("");
+  const navigate = useNavigate();
 
-  const validarLogin = () => {
-    if (email === "eduardo.lino@pucpr.br" && senha === "123456") {
-      setMensagem("Acessado com sucesso!");
-    } else {
-      setMensagem("Usuário ou senha incorretos!");
+  const validarLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, senha);
+      navigate("/principal");
+    } catch (error) {
+      setMensagem("Usuário não cadastrado ou senha incorreta!");
     }
   };
 
   return (
     <div style={{ margin: "20px", fontFamily: "Arial" }}>
       <h1>Login</h1>
-      <div style={{ marginBottom: "10px", margin: "10px" }}>
+      <div style={{ marginBottom: "10px" }}>
         <input
           type="email"
           placeholder="Digite seu e-mail"
@@ -36,6 +41,8 @@ function Login() {
         <button onClick={validarLogin}>Acessar</button>
       </div>
       <p>{mensagem}</p>
+
+      <button onClick={() => navigate("/cadastro")}>Ir para Cadastro</button>
     </div>
   );
 }
